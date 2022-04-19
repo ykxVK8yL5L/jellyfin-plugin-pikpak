@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Jellyfin.Plugin.PikPak.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
@@ -28,7 +29,7 @@ namespace Jellyfin.Plugin.PikPak
                 new PluginPageInfo
                 {
                     Name = this.Name,
-                    EmbeddedResourcePath = string.Format("{0}.Configuration.configPage.html", GetType().Namespace)
+                    EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture,"{0}.Configuration.configPage.html", GetType().Namespace)
                 }
             };
         }
