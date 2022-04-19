@@ -26,11 +26,6 @@
    <ItemGroup>
       <Folder Include="Images" />
     </ItemGroup>
-  
-  <ItemGroup>
-    <None Remove="Images\PikPak.png" />
-    <EmbeddedResource Include="Images\PikPak.png" />
-  </ItemGroup>
-  
+
 
 </Project>
