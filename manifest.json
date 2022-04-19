@@ -1,4 +1,4 @@
-{
+[{
     "category": "Channels",
     "changelog": "changelog\n",
     "description": "PikPak plugin for jellyfin.\n",
@@ -9,5 +9,13 @@
     "owner": "ykxVK8yL5L",
     "targetAbi": "10.7.0.0",
     "timestamp": "2022-04-19T03:55:07Z",
-    "version": "1.0.0.0"
-}
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "10.7 compatibility",
+        "targetAbi": "10.7.0",
+        "sourceUrl": "https://github.com/ykxVK8yL5L/jellyfin-plugin-pikpak/releases/download/1.0.0.0/pikpak_1.0.0.0.zip",
+        "checksum": "2d378e5e729a0330f2ee0677f41f4cbd",
+        "timestamp": "2022-04-19T03:55:07Z",
+      },
+}]
