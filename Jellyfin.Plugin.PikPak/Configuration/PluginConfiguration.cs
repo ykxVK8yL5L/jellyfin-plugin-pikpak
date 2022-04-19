@@ -9,6 +9,7 @@ namespace Jellyfin.Plugin.PikPak.Configuration
         public string UserName { get; set; }
         public string Password { get; set; }
         public string ProxyUrl { get; set; }
+        public string Token { get; set; }
        
 
         public PluginConfiguration()
@@ -18,6 +19,7 @@ namespace Jellyfin.Plugin.PikPak.Configuration
            UserName = "";
            Password = "";
            ProxyUrl = "";
+           Token = "";
         }
     }
 }

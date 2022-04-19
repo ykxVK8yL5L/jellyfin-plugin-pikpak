@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.PikPak.Configuration;
+using Jellyfin.Plugin.PikPak.Api;
+using Jellyfin.Plugin.PikPak.Api.Containers;
 using MediaBrowser.Controller.Channels;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
@@ -15,6 +17,7 @@ using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.MediaInfo;
 using Microsoft.Extensions.Logging;
+/// using Newtonsoft.Json.Linq;
 
 namespace Jellyfin.Plugin.PikPak
 {
@@ -25,6 +28,7 @@ namespace Jellyfin.Plugin.PikPak
     {
         /// private static readonly double CacheExpireTime = TimeSpan.FromSeconds(60).TotalMilliseconds;
         private readonly ILogger<Channel> _logger;
+        private readonly PikPakApi _pikPakApi;
   
         /// <summary>
         /// Initializes a new instance of the <see cref="Channel"/> class.
@@ -35,7 +39,8 @@ namespace Jellyfin.Plugin.PikPak
         {
             _logger = loggerFactory.CreateLogger<Channel>();
             _logger.LogInformation("PikPak channel created");
-
+            var pikpakApiLogger = loggerFactory.CreateLogger<PikPakApi>();
+            _pikPakApi = new PikPakApi(httpClientFactory, pikpakApiLogger);
         }
 
         /// <inheritdoc />
@@ -97,56 +102,7 @@ namespace Jellyfin.Plugin.PikPak
         public Task<ChannelItemResult> GetChannelItems(InternalChannelItemQuery query, CancellationToken cancellationToken)
         {
             _logger.LogDebug("[PikPak][GetChannelItems] Searching ID: {FolderId}", query.FolderId);
-
-            /*
-             *    id: {sport}_{date}_{gameId}_{network}_{quality}
-             */
-
-            /*
-             *    Structure:
-             *         Sport
-             *             Date - Past 7 days?
-             *                 Game Id
-             *                     Home vs Away
-             *                         Network - (Home/Away/3-Camera)
-             *                             Quality
-             */
-
-
-            return GetFolders();
-
-            // At root, return Folders
-            // if (string.IsNullOrEmpty(query.FolderId))
-            // {
-            //     return GetFolders();
-            // }
-
-            // _logger.LogDebug("[PikPak][GetChannelItems] Current Search Key: {FolderId}", query.FolderId);
-
-            // // Split parts to see how deep we are
-            // var querySplit = query.FolderId.Split('_', StringSplitOptions.RemoveEmptyEntries);
-
-            // switch (querySplit.Length)
-            // {
-            //     case 0:
-            //         // List Folders
-            //         return GetSportFolders();
-            //     case 1:
-            //         // List dates
-            //         return GetDateFolders(querySplit[0]);
-            //     case 2:
-            //         // List games
-            //         return GetGameFolders(querySplit[0], querySplit[1]);
-            //     case 3:
-            //         // List feeds
-            //         return GetFeedFolders(querySplit[0], querySplit[1], int.Parse(querySplit[2], CultureInfo.InvariantCulture));
-            //     case 4:
-            //         // List qualities
-            //         return GetQualityItems(querySplit[0], querySplit[1], int.Parse(querySplit[2], CultureInfo.InvariantCulture), querySplit[3]);
-            //     default:
-            //         // Unknown, return empty result
-            //         return Task.FromResult(new ChannelItemResult());
-            // }
+            return GetFolders(query.FolderId);
         }
 
      
@@ -155,31 +111,27 @@ namespace Jellyfin.Plugin.PikPak
         ///  Return list of file folders
         /// </summary>
         /// <returns>The channel item result.</returns>
-        private Task<ChannelItemResult> GetFolders()
+        private async Task<ChannelItemResult> GetFolders(string folder_id)
         {
-            _logger.LogDebug("[PikPak][GetSportFolders] Get Sport Folders");
+            _logger.LogDebug("[PikPak][GetFolders] Get Sport Folders");
+            var response = await _pikPakApi.GetFileListAsync(folder_id).ConfigureAwait(false);
 
-            var info = new List<ChannelItemInfo>();
-
-            info.Add(new ChannelItemInfo
+            var fileList = new List<File>();
+            if (fileList == null)
             {
-                Id = "nhl",
-                Name = "NHL",
-                Type = ChannelItemType.Folder
-            });
+                return new ChannelItemResult();
+            }
 
-            info.Add(new ChannelItemInfo
+           return new ChannelItemResult
             {
-                Id = "MLB",
-                Name = "MLB",
-                Type = ChannelItemType.Folder
-            });
-
-            return Task.FromResult(new ChannelItemResult
-            {
-                Items = info,
-                TotalRecordCount = info.Count
-            });
+                Items = fileList.Select(file => new ChannelItemInfo
+                {
+                    Id = $"{file.Id}",
+                    Name = $"{file.Name}",
+                    Type = file.Kind=="drive#folder"?ChannelItemType.Folder:ChannelItemType.Media,
+                }).ToList(),
+                TotalRecordCount = fileList.Count
+            };
         }
 
     
@@ -203,6 +155,5 @@ namespace Jellyfin.Plugin.PikPak
             // };
         }
 
-       
     }
 }
