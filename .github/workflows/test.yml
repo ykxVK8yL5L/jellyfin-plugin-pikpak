@@ -1,0 +1,10 @@
+name: Test Plugin
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+
+
+jobs:
+  call:
+    uses: jellyfin/jellyfin-meta-plugins/.github/workflows/build.yaml@master
