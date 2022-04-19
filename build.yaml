@@ -1,4 +1,3 @@
----
 name: "PikPak"
 guid: "513FD7F0-2F49-44AA-85A1-FBF328469F66"
 imageUrl: "https://github.com/ykxVK8yL5L/jellyfin-plugin-pikpak/raw/main/Jellyfin.Plugin.PikPak/Images/PikPak.png"
@@ -8,7 +7,7 @@ framework: "net5.0"
 overview: "PikPak plugin for jellyfin"
 description: >
   PikPak plugin for jellyfin.
-category: "General"
+category: "Channels"
 owner: "ykxVK8yL5L"
 artifacts:
 - "Jellyfin.Plugin.PikPak.dll"
