@@ -114,10 +114,21 @@ namespace Jellyfin.Plugin.PikPak
         private async Task<ChannelItemResult> GetFolders(string folder_id)
         {
             _logger.LogDebug("[PikPak][GetFolders] Get Sport Folders");
-            var response = await _pikPakApi.GetFileListAsync(folder_id).ConfigureAwait(false);
-
+            var pagetoken = "";
             var fileList = new List<File>();
-            if (fileList == null)
+            _logger.LogInformation("fuckGetFolders");
+            while(true){
+                _logger.LogInformation("fuckresponse_body");
+                var response_body = await _pikPakApi.GetFileListAsync(folder_id,pagetoken).ConfigureAwait(false);
+                 _logger.LogInformation(response_body);
+                break;
+                
+            }
+
+
+
+
+            if (fileList.Count<1)
             {
                 return new ChannelItemResult();
             }
