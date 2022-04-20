@@ -15,7 +15,7 @@ using MediaBrowser.Common.Net;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using RestSharp;
 
 namespace Jellyfin.Plugin.PikPak.Api
 {
@@ -69,32 +69,25 @@ namespace Jellyfin.Plugin.PikPak.Api
 
         public async Task<string> GetFileListAsync(string folder_id, string pagetoken)
         {
-            var response_content = string.Empty;
-            _logger.LogInformation("fuckGetFileListAsync");
-                // using (var httpClient = new HttpClient())
-                // {
-                //     using (var request = new HttpRequestMessage(new HttpMethod("GET"), "https://api-drive.mypikpak.com/drive/v1/files?parent_id="+folder_id+"&thumbnail_size=SIZE_LARGE&with_audit=true&page_token="+pagetoken+"&limit=0&filters={\"phase\":{\"eq\":\"PHASE_TYPE_COMPLETE\"},\"trashed\":{\"eq\":false}}"))
-                //     {
-                //         request.Headers.Add("Authorization", "Bearer "+_token);
-                //         request.Headers.Add("Accept", "application/json");
-                //         request.Headers.Add("Content-Type", "application/json");
-                //         var response = await httpClient.SendAsync(request);
-                //          _logger.LogInformation("fuckResult"+response.StatusCode.ToString());
-                //         // if ((int)response.StatusCode == 401){
-                //         //     TokenRefresh();
-                //         //     return await GetFileListAsync(folder_id, pagetoken);
-                //         // }
-                //         string result = response.Content.ReadAsStringAsync().Result;
-                //          _logger.LogInformation("fuckResult"+result);
-                //         return result;
-                //     }
-                      
-                // }
-
-
-
-                return response_content;
-
+            var response_content = "";
+            var url = "https://api-drive.mypikpak.com/drive/v1/files?parent_id="+folder_id+"&page_token="+pagetoken+"&thumbnail_size=SIZE_LARGE&with_audit=true&filters=%7B%22phase%22:%7B%22eq%22:%22PHASE_TYPE_COMPLETE%22%7D,%22trashed%22:%7B%22eq%22:false%7D%7D";
+            using (var httpClient = new HttpClient())
+            {
+                using (var request = new HttpRequestMessage(new HttpMethod("GET"), url))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    var response = await httpClient.SendAsync(request);
+                    if ((int)response.StatusCode == 401){
+                        TokenRefresh();
+                        return await GetFileListAsync(folder_id, pagetoken);
+                    }
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    response_content = result;
+                    // return result;
+                }
+                    
+            }
+            return response_content;
 
         }
 

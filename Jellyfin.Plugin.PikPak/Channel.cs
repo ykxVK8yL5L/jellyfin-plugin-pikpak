@@ -17,7 +17,8 @@ using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.MediaInfo;
 using Microsoft.Extensions.Logging;
-/// using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Jellyfin.Plugin.PikPak
 {
@@ -112,16 +113,26 @@ namespace Jellyfin.Plugin.PikPak
         /// <returns>The channel item result.</returns>
         private async Task<ChannelItemResult> GetFolders(string folder_id)
         {
-            _logger.LogDebug("[PikPak][GetFolders] Get Sport Folders");
+            _logger.LogInformation("[PikPak][GetFolders] Get Folders");
+
             var pagetoken = "";
-            var fileList = new List<File>();
-            _logger.LogInformation("fuckGetFolders");
+            List<File> fileList = new List<File>();
             while(true){
-                _logger.LogInformation("fuckresponse_body");
                 var response_body = await _pikPakApi.GetFileListAsync(folder_id,pagetoken).ConfigureAwait(false);
-                 _logger.LogInformation(response_body);
-                break;
-                
+
+                _logger.LogInformation(response_body);
+                var response_obj = JObject.Parse(response_body);
+                foreach(var file in response_obj["files"]){
+                    var file_obj = JsonConvert.DeserializeObject<File>(file.ToString());
+                    fileList.Add(file_obj);
+                }
+
+                var next_page_token = response_obj["nextPageToken"].ToString();
+                pagetoken  = next_page_token;   
+                _logger.LogInformation("fuckpagetokenis"+pagetoken);  
+                if(string.IsNullOrEmpty(next_page_token)){
+                    break;
+                }
             }
 
 

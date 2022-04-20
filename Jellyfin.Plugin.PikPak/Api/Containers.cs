@@ -23,6 +23,12 @@ namespace Jellyfin.Plugin.PikPak.Api.Containers
 
         [JsonPropertyName("original_url")]
         public string? OriginalUrl { get; set; }
+
+        [JsonPropertyName("mime_type")]
+        public string? MimeType { get; set; }
+
+
+
     }
 
   
