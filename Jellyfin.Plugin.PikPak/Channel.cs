@@ -117,8 +117,6 @@ namespace Jellyfin.Plugin.PikPak
             List<File> fileList = new List<File>();
             while(true){
                 var response_body = await _pikPakApi.GetFileListAsync(folder_id,pagetoken).ConfigureAwait(false);
-                _logger.LogInformation(response_body);
-
                 var response_obj = JObject.Parse(response_body);
                 foreach(var file in response_obj["files"]){
                     var file_obj = JObject.Parse(file.ToString());
@@ -168,21 +166,18 @@ namespace Jellyfin.Plugin.PikPak
             var media_list = new List<MediaSourceInfo>();
 
             var response_body = await _pikPakApi.GetFileInfoAsync(id).ConfigureAwait(false);
-            _logger.LogInformation(response_body);
             var response_obj = JObject.Parse(response_body);
             foreach(var file in response_obj["medias"]){
                 var file_obj = JObject.Parse(file.ToString());
                 media_list.Add(new MediaSourceInfo
                 {
+                    Name = file_obj["name"].ToString(),
                     Path = file_obj["link"]["url"].ToString(),
                     Protocol = MediaProtocol.Http,
                     Id = file_obj["media_id"].ToString(),
                     Bitrate = Int32.Parse(file_obj["video"]["bit_rate"].ToString()),
-                    SupportsProbing = true,
                     IsRemote = true,
-                    SupportsDirectPlay = true,
-                    SupportsDirectStream = true,
-                    RequiresOpening = true
+                  
                 });
             }
         
@@ -191,6 +186,7 @@ namespace Jellyfin.Plugin.PikPak
             // {
             //     return Enumerable.Empty<MediaSourceInfo>();
             // }
+            
 
             return media_list;
         }
