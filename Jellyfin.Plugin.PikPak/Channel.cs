@@ -115,28 +115,38 @@ namespace Jellyfin.Plugin.PikPak
         {
             _logger.LogInformation("[PikPak][GetFolders] Get Folders");
 
-            var pagetoken = "";
+            string pagetoken = string.Empty;
             List<File> fileList = new List<File>();
             while(true){
                 var response_body = await _pikPakApi.GetFileListAsync(folder_id,pagetoken).ConfigureAwait(false);
-
                 _logger.LogInformation(response_body);
+
                 var response_obj = JObject.Parse(response_body);
                 foreach(var file in response_obj["files"]){
-                    var file_obj = JsonConvert.DeserializeObject<File>(file.ToString());
-                    fileList.Add(file_obj);
+                    var file_obj = JObject.Parse(file.ToString());
+
+                    if(!file_obj["mime_type"].ToString().Contains('video')){
+                        continue;
+                    }
+ 
+                    fileList.Add(new File
+                    {
+                        Id = file_obj["id"].ToString(),
+                        Kind = file_obj["kind"].ToString(),
+                        Name = file_obj["name"].ToString(),
+                        FileExtension = file_obj["file_extension"].ToString(),
+                        ThumbnailLink = file_obj["thumbnail_link"].ToString(),
+                        OriginalUrl = file_obj["original_url"].ToString(),
+                        MimeType = file_obj["mime_type"].ToString()
+                    });
                 }
 
-                var next_page_token = response_obj["nextPageToken"].ToString();
-                pagetoken  = next_page_token;   
-                _logger.LogInformation("fuckpagetokenis"+pagetoken);  
+                var next_page_token = response_obj["next_page_token"].ToString();
+                pagetoken  = next_page_token;  
                 if(string.IsNullOrEmpty(next_page_token)){
                     break;
                 }
             }
-
-
-
 
             if (fileList.Count<1)
             {
