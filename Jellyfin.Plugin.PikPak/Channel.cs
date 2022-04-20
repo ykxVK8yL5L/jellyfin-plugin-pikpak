@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.PikPak.Configuration;
 using Jellyfin.Plugin.PikPak.Api;
-using Jellyfin.Plugin.PikPak.Api.Containers;
 using MediaBrowser.Controller.Channels;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
@@ -25,11 +24,13 @@ namespace Jellyfin.Plugin.PikPak
     /// <summary>
     /// The PikPak channel.
     /// </summary>
-    public class Channel : IChannel, IRequiresMediaInfoCallback
+    public class Channel : IChannel, IHasCacheKey,IRequiresMediaInfoCallback
     {
-        /// private static readonly double CacheExpireTime = TimeSpan.FromSeconds(60).TotalMilliseconds;
+        private static readonly double CacheExpireTime = TimeSpan.FromSeconds(3600).TotalMilliseconds;
         private readonly ILogger<Channel> _logger;
         private readonly PikPakApi _pikPakApi;
+
+        private readonly ConcurrentDictionary<string, CacheItem<List<MediaSourceInfo>>> _mediaCache;
   
         /// <summary>
         /// Initializes a new instance of the <see cref="Channel"/> class.
@@ -41,6 +42,7 @@ namespace Jellyfin.Plugin.PikPak
             _logger.LogInformation("PikPak channel created");
             var pikpakApiLogger = loggerFactory.CreateLogger<PikPakApi>();
             _pikPakApi = new PikPakApi(pikpakApiLogger);
+            _mediaCache = new ConcurrentDictionary<string, CacheItem<List<MediaSourceInfo>>>();
         }
 
         /// <inheritdoc />
@@ -151,6 +153,9 @@ namespace Jellyfin.Plugin.PikPak
                     Name = $"{file.Name}",
                     ImageUrl = $"{file.ThumbnailLink}",
                     Type = file.Kind=="drive#folder"?ChannelItemType.Folder:ChannelItemType.Media,
+                    ContentType = ChannelMediaContentType.Movie,
+                    MediaType = ChannelMediaType.Video,
+                    IsLiveStream = file.Kind=="drive#folder"?false:true
                 }).ToList(),
                 TotalRecordCount = fileList.Count
             };
@@ -160,15 +165,15 @@ namespace Jellyfin.Plugin.PikPak
         public async Task<IEnumerable<MediaSourceInfo>> GetChannelItemMediaInfo(string id, CancellationToken cancellationToken)
         {
             //var split = id.Split('_', StringSplitOptions.RemoveEmptyEntries);
-            _logger.LogInformation("[PikPak][GetFolders] GetChannelItemMediaInfo is"+id);
-
-            var media_list = new List<MediaSourceInfo>();
-
+            _logger.LogInformation("[PikPak][GetChannelItemMediaInfo] GetChannelItemMediaInfo is"+id);
+            
+            var mediaSourceInfos = new List<MediaSourceInfo>();
             var response_body = await _pikPakApi.GetFileInfoAsync(id).ConfigureAwait(false);
+            //_logger.LogInformation("[PikPak][GetChannelItemMediaInfo] response_body:----------------------"+response_body);
             var response_obj = JObject.Parse(response_body);
             foreach(var file in response_obj["medias"]){
                 var file_obj = JObject.Parse(file.ToString());
-                media_list.Add(new MediaSourceInfo
+                mediaSourceInfos.Add(new MediaSourceInfo
                 {
                     Name = file_obj["name"].ToString(),
                     Path = file_obj["link"]["url"].ToString(),
@@ -176,18 +181,23 @@ namespace Jellyfin.Plugin.PikPak
                     Id = file_obj["media_id"].ToString(),
                     Bitrate = Int32.Parse(file_obj["video"]["bit_rate"].ToString()),
                     IsRemote = true,
-                  
                 });
             }
-        
 
-            // if (media_list.Count<1)
-            // {
-            //     return Enumerable.Empty<MediaSourceInfo>();
-            // }
-            
+            return mediaSourceInfos;
 
-            return media_list;
+            if (mediaSourceInfos.Count<1)
+            {
+                return Enumerable.Empty<MediaSourceInfo>();
+            }
+
+        }
+
+         /// <inheritdoc />
+        public string GetCacheKey(string userId)
+        {
+            // Never cache, always return new value
+            return DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture);
         }
 
     }

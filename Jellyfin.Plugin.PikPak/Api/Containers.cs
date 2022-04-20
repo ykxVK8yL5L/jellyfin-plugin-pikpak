@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Jellyfin.Plugin.PikPak.Api.Containers
+namespace Jellyfin.Plugin.PikPak.Api
 {
     public class File
     {

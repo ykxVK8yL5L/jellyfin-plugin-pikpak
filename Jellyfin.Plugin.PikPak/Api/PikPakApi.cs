@@ -9,13 +9,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.PikPak.Configuration;
-using Jellyfin.Plugin.PikPak.Api.Containers;
 using MediaBrowser.Common.Json;
 using MediaBrowser.Common.Net;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RestSharp;
 
 namespace Jellyfin.Plugin.PikPak.Api
 {

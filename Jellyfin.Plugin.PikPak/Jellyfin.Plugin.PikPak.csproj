@@ -13,7 +13,6 @@
     <PackageReference Include="System.Memory" Version="4.5.*" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="RestSharp" Version="106.6.10" />
   </ItemGroup>
 
    <ItemGroup>
