@@ -105,7 +105,6 @@ namespace Jellyfin.Plugin.PikPak
             return GetFolders(query.FolderId);
         }
 
-     
 
         /// <summary>
         ///  Return list of file folders
@@ -114,7 +113,6 @@ namespace Jellyfin.Plugin.PikPak
         private async Task<ChannelItemResult> GetFolders(string folder_id)
         {
             _logger.LogInformation("[PikPak][GetFolders] Get Folders");
-
             string pagetoken = string.Empty;
             List<File> fileList = new List<File>();
             while(true){
@@ -124,11 +122,9 @@ namespace Jellyfin.Plugin.PikPak
                 var response_obj = JObject.Parse(response_body);
                 foreach(var file in response_obj["files"]){
                     var file_obj = JObject.Parse(file.ToString());
-
-                    if(!file_obj["mime_type"].ToString().Contains('video')){
+                    if(string.Equals(file_obj["kind"].ToString(),"drive#file") && !file_obj["mime_type"].ToString().Contains("video")){
                         continue;
                     }
- 
                     fileList.Add(new File
                     {
                         Id = file_obj["id"].ToString(),
@@ -140,50 +136,63 @@ namespace Jellyfin.Plugin.PikPak
                         MimeType = file_obj["mime_type"].ToString()
                     });
                 }
-
                 var next_page_token = response_obj["next_page_token"].ToString();
                 pagetoken  = next_page_token;  
                 if(string.IsNullOrEmpty(next_page_token)){
                     break;
                 }
             }
-
             if (fileList.Count<1)
             {
                 return new ChannelItemResult();
             }
-
            return new ChannelItemResult
             {
                 Items = fileList.Select(file => new ChannelItemInfo
                 {
                     Id = $"{file.Id}",
                     Name = $"{file.Name}",
+                    ImageUrl = $"{file.ThumbnailLink}",
                     Type = file.Kind=="drive#folder"?ChannelItemType.Folder:ChannelItemType.Media,
                 }).ToList(),
                 TotalRecordCount = fileList.Count
             };
         }
 
-    
         /// <inheritdoc />
         public async Task<IEnumerable<MediaSourceInfo>> GetChannelItemMediaInfo(string id, CancellationToken cancellationToken)
         {
-            var split = id.Split('_', StringSplitOptions.RemoveEmptyEntries);
-           
-            return Enumerable.Empty<MediaSourceInfo>();
+            //var split = id.Split('_', StringSplitOptions.RemoveEmptyEntries);
+            _logger.LogInformation("[PikPak][GetFolders] GetChannelItemMediaInfo is"+id);
 
-            // return new List<MediaSourceInfo>
+            var media_list = new List<MediaSourceInfo>();
+
+            var response_body = await _pikPakApi.GetFileInfoAsync(id).ConfigureAwait(false);
+            _logger.LogInformation(response_body);
+            var response_obj = JObject.Parse(response_body);
+            foreach(var file in response_obj["medias"]){
+                var file_obj = JObject.Parse(file.ToString());
+                media_list.Add(new MediaSourceInfo
+                {
+                    Path = file_obj["link"]["url"].ToString(),
+                    Protocol = MediaProtocol.Http,
+                    Id = file_obj["media_id"].ToString(),
+                    Bitrate = Int32.Parse(file_obj["video"]["bit_rate"].ToString()),
+                    SupportsProbing = true,
+                    IsRemote = true,
+                    SupportsDirectPlay = true,
+                    SupportsDirectStream = true,
+                    RequiresOpening = true
+                });
+            }
+        
+
+            // if (media_list.Count<1)
             // {
-            //     new ()
-            //     {
-            //         Path = streamUrl,
-            //         Protocol = MediaProtocol.Http,
-            //         Id = id,
-            //         Bitrate = bitrate,
-            //         SupportsProbing = false
-            //     }
-            // };
+            //     return Enumerable.Empty<MediaSourceInfo>();
+            // }
+
+            return media_list;
         }
 
     }

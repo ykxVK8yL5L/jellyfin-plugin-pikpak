@@ -92,5 +92,32 @@ namespace Jellyfin.Plugin.PikPak.Api
         }
 
 
+        public async Task<string> GetFileInfoAsync(string file_id)
+        {
+            var response_content = "";
+            var url = "https://api-drive.mypikpak.com/drive/v1/files/"+file_id+"?_magic=2021&thumbnail_size=SIZE_LARGE";
+            using (var httpClient = new HttpClient())
+            {
+                using (var request = new HttpRequestMessage(new HttpMethod("GET"), url))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    var response = await httpClient.SendAsync(request);
+                    if ((int)response.StatusCode == 401){
+                        TokenRefresh();
+                        return await GetFileInfoAsync(file_id);
+                    }
+                    string result = response.Content.ReadAsStringAsync().Result;
+                    response_content = result;
+                }
+                    
+            }
+            return response_content;
+
+        }
+
+
+        
+
+
     }
 }
