@@ -1,6 +1,7 @@
 # 半成品  啥也不是  切勿使用    
 # 可以成功播放视频  但是cpu和内存负载高  不建议使用    
 
+## https://raw.githubusercontent.com/ykxVK8yL5L/jellyfin-plugin-pikpak/main/manifest.json    
 
 # So you want to make a Jellyfin plugin
 
