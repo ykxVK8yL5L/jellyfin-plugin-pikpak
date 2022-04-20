@@ -60,7 +60,6 @@ namespace Jellyfin.Plugin.PikPak.Api
                     if(response_obj.ContainsKey("access_token")){
                         var access_token = response_obj["access_token"].ToString();
                         if(!string.IsNullOrEmpty(access_token)){
-                            _logger.LogInformation(access_token);
                             _token = access_token;
                             Plugin.Instance.Configuration.Token = _token;
                             Plugin.Instance.SaveConfiguration();

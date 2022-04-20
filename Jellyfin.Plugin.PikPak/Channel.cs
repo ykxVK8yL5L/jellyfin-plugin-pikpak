@@ -81,7 +81,6 @@ namespace Jellyfin.Plugin.PikPak
         /// <inheritdoc />
         public Task<DynamicImageResponse> GetChannelImage(ImageType type, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("[PikPak] GetChannelImage {ImagePath}", GetType().Namespace + ".Images.PikPak.png");
             _logger.LogInformation("[PikPak] GetChannelImage {ImagePath}", GetType().Namespace + ".Images.PikPak.png");
             var path = GetType().Namespace + ".Images.PikPak.png";
             return Task.FromResult(new DynamicImageResponse
