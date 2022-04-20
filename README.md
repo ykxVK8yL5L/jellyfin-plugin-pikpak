@@ -1,4 +1,5 @@
-# 半成品  啥也不是  切勿使用      
+# 半成品  啥也不是  切勿使用    
+# 可以成功播放视频  但是cpu和内存负载高  不建议使用    
 
 
 # So you want to make a Jellyfin plugin

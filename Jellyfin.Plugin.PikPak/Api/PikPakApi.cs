@@ -102,7 +102,7 @@ namespace Jellyfin.Plugin.PikPak.Api
         public async Task<string> GetFileInfoAsync(string file_id)
         {
             var response_content = "";
-            var url = "https://api-drive.mypikpak.com/drive/v1/files/"+file_id+"?_magic=2021&thumbnail_size=SIZE_LARGE";
+            var url = "https://api-drive.mypikpak.com/drive/v1/files/"+file_id+"?thumbnail_size=SIZE_LARGE";
             if(_proxy_url.Length>4){
                 url = _proxy_url+"/"+url;
             }
@@ -111,7 +111,13 @@ namespace Jellyfin.Plugin.PikPak.Api
             {
                 using (var request = new HttpRequestMessage(new HttpMethod("GET"), url))
                 {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+                    //request.Headers.User-Agent = new AuthenticationHeaderValue("Bearer", _token);
+                    request.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");
+                    request.Headers.Add("Origin", "https://api-drive.mypikpak.com/drive/v1/files");
+                    request.Headers.Add("Referer", "https://api-drive.mypikpak.com/drive/v1/files");
+                    request.Headers.Add("Authorization", "Bearer " + _token);
+
                     var response = await httpClient.SendAsync(request);
                     if ((int)response.StatusCode == 401){
                         TokenRefresh();

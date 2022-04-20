@@ -26,12 +26,10 @@ namespace Jellyfin.Plugin.PikPak
     /// </summary>
     public class Channel : IChannel, IHasCacheKey,IRequiresMediaInfoCallback
     {
-        private static readonly double CacheExpireTime = TimeSpan.FromSeconds(3600).TotalMilliseconds;
+    
         private readonly ILogger<Channel> _logger;
         private readonly PikPakApi _pikPakApi;
 
-        private readonly ConcurrentDictionary<string, CacheItem<List<MediaSourceInfo>>> _mediaCache;
-  
         /// <summary>
         /// Initializes a new instance of the <see cref="Channel"/> class.
         /// </summary>
@@ -42,7 +40,6 @@ namespace Jellyfin.Plugin.PikPak
             _logger.LogInformation("PikPak channel created");
             var pikpakApiLogger = loggerFactory.CreateLogger<PikPakApi>();
             _pikPakApi = new PikPakApi(pikpakApiLogger);
-            _mediaCache = new ConcurrentDictionary<string, CacheItem<List<MediaSourceInfo>>>();
         }
 
         /// <inheritdoc />
@@ -166,16 +163,19 @@ namespace Jellyfin.Plugin.PikPak
         {
             //var split = id.Split('_', StringSplitOptions.RemoveEmptyEntries);
             _logger.LogInformation("[PikPak][GetChannelItemMediaInfo] GetChannelItemMediaInfo is"+id);
-            
-            var mediaSourceInfos = new List<MediaSourceInfo>();
+
+
             var response_body = await _pikPakApi.GetFileInfoAsync(id).ConfigureAwait(false);
-            //_logger.LogInformation("[PikPak][GetChannelItemMediaInfo] response_body:----------------------"+response_body);
+            _logger.LogInformation("[PikPak][GetChannelItemMediaInfo] response_body:----------------------"+response_body);
+
+
+            var mediaSourceInfos = new List<MediaSourceInfo>();
             var response_obj = JObject.Parse(response_body);
             foreach(var file in response_obj["medias"]){
                 var file_obj = JObject.Parse(file.ToString());
                 mediaSourceInfos.Add(new MediaSourceInfo
                 {
-                    Name = file_obj["name"].ToString(),
+                    Name = file_obj["media_name"].ToString(),
                     Path = file_obj["link"]["url"].ToString(),
                     Protocol = MediaProtocol.Http,
                     Id = file_obj["media_id"].ToString(),
