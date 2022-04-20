@@ -41,29 +41,34 @@ namespace Jellyfin.Plugin.PikPak.Api
 
         public async void TokenRefresh()
         {
-                using (var httpClient = new HttpClient())
+
+            var url =  "https://user.mypikpak.com/v1/auth/signin";
+            if(_proxy_url.Length>4){
+                url = _proxy_url+"/"+url;
+            }
+            using (var httpClient = new HttpClient())
+            {
+                using (var request = new HttpRequestMessage(new HttpMethod("POST"), url))
                 {
-                    using (var request = new HttpRequestMessage(new HttpMethod("POST"), "https://user.mypikpak.com/v1/auth/signin"))
-                    {
-                        request.Content = new StringContent("{\"captcha_token\":\"\",\"client_id\":\"YNxT9w7GMdWvEOKa\",\"client_secret\":\"dbw2OtmVEeuUvIptb1Coyg\",\"username\":\""+_username+"\",\"password\":\""+_password+"\"}");
-                        request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("text/plain"); 
-                        var response = await httpClient.SendAsync(request);
-                        string result = response.Content.ReadAsStringAsync().Result;
+                    request.Content = new StringContent("{\"captcha_token\":\"\",\"client_id\":\"YNxT9w7GMdWvEOKa\",\"client_secret\":\"dbw2OtmVEeuUvIptb1Coyg\",\"username\":\""+_username+"\",\"password\":\""+_password+"\"}");
+                    request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("text/plain"); 
+                    var response = await httpClient.SendAsync(request);
+                    string result = response.Content.ReadAsStringAsync().Result;
 
 
-                        var response_obj = JObject.Parse(result);
-                        if(response_obj.ContainsKey("access_token")){
-                            var access_token = response_obj["access_token"].ToString();
-                            if(!string.IsNullOrEmpty(access_token)){
-                                _logger.LogInformation(access_token);
-                                _token = access_token;
-                                Plugin.Instance.Configuration.Token = _token;
-                                Plugin.Instance.SaveConfiguration();
-                            }
+                    var response_obj = JObject.Parse(result);
+                    if(response_obj.ContainsKey("access_token")){
+                        var access_token = response_obj["access_token"].ToString();
+                        if(!string.IsNullOrEmpty(access_token)){
+                            _logger.LogInformation(access_token);
+                            _token = access_token;
+                            Plugin.Instance.Configuration.Token = _token;
+                            Plugin.Instance.SaveConfiguration();
                         }
-
                     }
+
                 }
+            }
             
         }
 
@@ -71,6 +76,11 @@ namespace Jellyfin.Plugin.PikPak.Api
         {
             var response_content = "";
             var url = "https://api-drive.mypikpak.com/drive/v1/files?parent_id="+folder_id+"&page_token="+pagetoken+"&thumbnail_size=SIZE_LARGE&with_audit=true&filters=%7B%22phase%22:%7B%22eq%22:%22PHASE_TYPE_COMPLETE%22%7D,%22trashed%22:%7B%22eq%22:false%7D%7D";
+             if(_proxy_url.Length>4){
+                url = _proxy_url+"/"+url;
+            }
+            
+            
             using (var httpClient = new HttpClient())
             {
                 using (var request = new HttpRequestMessage(new HttpMethod("GET"), url))
@@ -96,6 +106,10 @@ namespace Jellyfin.Plugin.PikPak.Api
         {
             var response_content = "";
             var url = "https://api-drive.mypikpak.com/drive/v1/files/"+file_id+"?_magic=2021&thumbnail_size=SIZE_LARGE";
+            if(_proxy_url.Length>4){
+                url = _proxy_url+"/"+url;
+            }
+
             using (var httpClient = new HttpClient())
             {
                 using (var request = new HttpRequestMessage(new HttpMethod("GET"), url))
