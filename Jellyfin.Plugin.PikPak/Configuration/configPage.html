@@ -29,6 +29,13 @@
                         <input id="CacheSeconds" name="CacheSeconds" type="number" is="emby-input" min="0" />
                         <div class="fieldDescription">缓存时间【秒】</div>
                     </div>
+                    <div class="inputContainer">
+                        <label class="inputeLabel inputLabelUnfocused" for="Token">认证Token</label>
+                        <div>
+                            <textarea id="Token" name="Token" style="width: 100%;"></textarea>
+                        </div>
+                        <div class="fieldDescription">认证Token</div>
+                    </div>
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
                             <span>保存</span>
@@ -50,6 +57,7 @@
                         document.querySelector('#UserName').value = config.UserName;
                         document.querySelector('#Password').value = config.Password;
                         document.querySelector('#ProxyUrl').value = config.ProxyUrl;
+                        document.querySelector('#Token').value = config.Token;
                         Dashboard.hideLoadingMsg();
                     });    
                 })
@@ -62,6 +70,7 @@
                     config.UserName = document.querySelector('#UserName').value;
                     config.Password = document.querySelector('#Password').value;
                     config.ProxyUrl = document.querySelector('#ProxyUrl').value;
+                    config.Token = document.querySelector('#Token').value;
                     ApiClient.updatePluginConfiguration(PikPakConfig.pluginUniqueId, config).then(function (result) {
                         Dashboard.processPluginConfigurationUpdateResult(result);
                     });

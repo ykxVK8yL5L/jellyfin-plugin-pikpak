@@ -33,14 +33,13 @@ namespace Jellyfin.Plugin.PikPak
         /// <summary>
         /// Initializes a new instance of the <see cref="Channel"/> class.
         /// </summary>
-        /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
         /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
-        public Channel(IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory)
+        public Channel(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<Channel>();
             _logger.LogInformation("PikPak channel created");
             var pikpakApiLogger = loggerFactory.CreateLogger<PikPakApi>();
-            _pikPakApi = new PikPakApi(httpClientFactory, pikpakApiLogger);
+            _pikPakApi = new PikPakApi(pikpakApiLogger);
         }
 
         /// <inheritdoc />
