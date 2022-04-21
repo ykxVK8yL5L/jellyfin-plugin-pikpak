@@ -153,6 +153,8 @@ namespace Jellyfin.Plugin.PikPak
         /// <inheritdoc />
         public async Task<IEnumerable<MediaSourceInfo>> GetChannelItemMediaInfo(string id, CancellationToken cancellationToken)
         {
+
+            var response_body = await _pikPakApi.GetFileInfoAsync(id).ConfigureAwait(false);
             var mediaSourceInfos = new List<MediaSourceInfo>();
             var response_obj = JObject.Parse(response_body);
             foreach(var file in response_obj["medias"]){
