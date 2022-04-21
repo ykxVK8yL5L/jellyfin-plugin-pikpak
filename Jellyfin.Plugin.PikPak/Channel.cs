@@ -27,14 +27,18 @@ namespace Jellyfin.Plugin.PikPak
     public class Channel : IChannel, IHasCacheKey,IRequiresMediaInfoCallback
     {
     
-
+        private readonly ILogger<Channel> _logger;
         private readonly PikPakApi _pikPakApi;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Channel"/> class.
         /// </summary>
-        public Channel()
+        public Channel(ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.CreateLogger<Channel>();
+            var pikpakApiLogger = loggerFactory.CreateLogger<PikPakApi>();
+            _pikPakApi = new PikPakApi(pikpakApiLogger);
+            _logger.LogInformation("PikPak Channel initialized");
         }
 
         /// <inheritdoc />

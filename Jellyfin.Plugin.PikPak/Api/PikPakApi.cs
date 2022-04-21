@@ -20,18 +20,21 @@ namespace Jellyfin.Plugin.PikPak.Api
  
     public class PikPakApi
     {
+        private readonly ILogger<PikPakApi> _logger;
         private readonly string _username;
         private readonly string _password;
         private readonly string _proxy_url;
         private string _token;
         private readonly JsonSerializerOptions _jsonSerializerOptions = JsonDefaults.GetOptions();
 
-        public PikPakApi()
+        public PikPakApi(ILogger<PikPakApi> logger)
         {
+            _logger = logger;
             _username = Plugin.Instance.Configuration.UserName;
             _password = Plugin.Instance.Configuration.Password;
             _proxy_url = Plugin.Instance.Configuration.ProxyUrl;
             _token = Plugin.Instance.Configuration.Token;
+            _logger.LogInformation("PikPakApi initialized");
 
         }
 
