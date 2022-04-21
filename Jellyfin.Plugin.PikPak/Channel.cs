@@ -27,19 +27,14 @@ namespace Jellyfin.Plugin.PikPak
     public class Channel : IChannel, IHasCacheKey,IRequiresMediaInfoCallback
     {
     
-        private readonly ILogger<Channel> _logger;
+
         private readonly PikPakApi _pikPakApi;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Channel"/> class.
         /// </summary>
-        /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
-        public Channel(ILoggerFactory loggerFactory)
+        public Channel()
         {
-            _logger = loggerFactory.CreateLogger<Channel>();
-            _logger.LogInformation("PikPak channel created");
-            var pikpakApiLogger = loggerFactory.CreateLogger<PikPakApi>();
-            _pikPakApi = new PikPakApi(pikpakApiLogger);
         }
 
         /// <inheritdoc />
@@ -80,7 +75,6 @@ namespace Jellyfin.Plugin.PikPak
         /// <inheritdoc />
         public Task<DynamicImageResponse> GetChannelImage(ImageType type, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[PikPak] GetChannelImage {ImagePath}", GetType().Namespace + ".Images.PikPak.png");
             var path = GetType().Namespace + ".Images.PikPak.png";
             return Task.FromResult(new DynamicImageResponse
             {
@@ -99,7 +93,6 @@ namespace Jellyfin.Plugin.PikPak
         /// <inheritdoc />
         public Task<ChannelItemResult> GetChannelItems(InternalChannelItemQuery query, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("[PikPak][GetChannelItems] Searching ID: {FolderId}", query.FolderId);
             return GetFolders(query.FolderId);
         }
 
@@ -110,7 +103,6 @@ namespace Jellyfin.Plugin.PikPak
         /// <returns>The channel item result.</returns>
         private async Task<ChannelItemResult> GetFolders(string folder_id)
         {
-            _logger.LogInformation("[PikPak][GetFolders] Get Folders");
             string pagetoken = string.Empty;
             List<File> fileList = new List<File>();
             while(true){
@@ -161,14 +153,6 @@ namespace Jellyfin.Plugin.PikPak
         /// <inheritdoc />
         public async Task<IEnumerable<MediaSourceInfo>> GetChannelItemMediaInfo(string id, CancellationToken cancellationToken)
         {
-            //var split = id.Split('_', StringSplitOptions.RemoveEmptyEntries);
-            _logger.LogInformation("[PikPak][GetChannelItemMediaInfo] GetChannelItemMediaInfo is"+id);
-
-
-            var response_body = await _pikPakApi.GetFileInfoAsync(id).ConfigureAwait(false);
-            _logger.LogInformation("[PikPak][GetChannelItemMediaInfo] response_body:----------------------"+response_body);
-
-
             var mediaSourceInfos = new List<MediaSourceInfo>();
             var response_obj = JObject.Parse(response_body);
             foreach(var file in response_obj["medias"]){
