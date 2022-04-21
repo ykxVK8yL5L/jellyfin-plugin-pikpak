@@ -13,6 +13,8 @@ namespace Jellyfin.Plugin.PikPak
     {
         public override string Name => "PikPak";
 
+        public override string Description => "Play videos of PikPak.";
+
         public override Guid Id => Guid.Parse("513FD7F0-2F49-44AA-85A1-FBF328469F66");
 
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer) : base(applicationPaths, xmlSerializer)
