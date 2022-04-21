@@ -34,7 +34,7 @@ namespace Jellyfin.Plugin.PikPak
         /// </summary>
         public Channel()
         {
-            _pikPakApi = new PikPakApi(pikpakApiLogger);
+            _pikPakApi = new PikPakApi();
         }
 
         /// <inheritdoc />
