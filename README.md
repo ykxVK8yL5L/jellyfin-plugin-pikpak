@@ -10,7 +10,7 @@ Awesome! This guide is for you. Jellyfin plugins are written using the dotnet st
 
 ## 0. Things you need to get started
 
-- [Dotnet SDK 5.0](https://dotnet.microsoft.com/download)
+- [Dotnet SDK 6.0](https://dotnet.microsoft.com/download)
 
 - An editor of your choice. Some free choices are:
 

@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.PikPak.Configuration;
-using MediaBrowser.Common.Json;
+using Jellyfin.Extensions.Json;
 using MediaBrowser.Common.Net;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -24,7 +24,7 @@ namespace Jellyfin.Plugin.PikPak.Api
         private readonly string _password;
         private readonly string _proxy_url;
         private string _token;
-        private readonly JsonSerializerOptions _jsonSerializerOptions = JsonDefaults.GetOptions();
+        private readonly JsonSerializerOptions _jsonSerializerOptions = JsonDefaults.Options;
 
         public PikPakApi()
         {

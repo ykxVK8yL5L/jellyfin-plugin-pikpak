@@ -8,9 +8,18 @@
 	"name": "PikPak",
 	"overview": "PikPak plugin for jellyfin",
 	"owner": "ykxVK8yL5L",
-	"targetAbi": "10.7.0.0",
-	"timestamp": "2022-04-19T03:55:07Z",
-	"versions": [{
+	"targetAbi": "10.8.0",
+	"timestamp": "2023-03-06T03:55:07Z",
+	"versions": [
+		{
+			"version": "10.8.0.0",
+			"changelog": "10.8 compatibility",
+       		 "targetAbi": "10.8.0",
+			"sourceUrl": "https://github.com/ykxVK8yL5L/jellyfin-plugin-pikpak/releases/download/10.8.0.0/pikpak_10.8.0.0.zip",
+			"checksum": "11a9bfab1f190f2169fc3eb3dc7ee725",
+			"timestamp": "2023-03-06T00:49:48Z"
+		},
+		{
 		"version": "1.0.0.0",
 		"changelog": "10.7 compatibility",
 		"targetAbi": "10.7.0",

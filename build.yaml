@@ -1,9 +1,9 @@
 name: "PikPak"
 guid: "513FD7F0-2F49-44AA-85A1-FBF328469F66"
 imageUrl: "https://github.com/ykxVK8yL5L/jellyfin-plugin-pikpak/raw/main/Jellyfin.Plugin.PikPak/Images/PikPak.png"
-version: "1.0.0.0"
-targetAbi: "10.7.0.0"
-framework: "net5.0"
+version: "10.8.0.0"
+targetAbi: "10.8.0.0"
+framework: "net6.0"
 overview: "PikPak plugin for jellyfin"
 description: >
   PikPak plugin for jellyfin.
