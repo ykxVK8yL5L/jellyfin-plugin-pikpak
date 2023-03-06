@@ -9,15 +9,15 @@
 	"overview": "PikPak plugin for jellyfin",
 	"owner": "ykxVK8yL5L",
 	"targetAbi": "10.8.0",
-	"timestamp": "2023-03-06T09:05:56Z",
+	"timestamp": "2023-03-06T10:15:24Z",
 	"versions": [
 		{
 			"version": "10.8.0.0",
 			"changelog": "10.8 compatibility",
        		 "targetAbi": "10.8.0",
 			"sourceUrl": "https://github.com/ykxVK8yL5L/jellyfin-plugin-pikpak/releases/download/10.8.0.0/pikpak_10.8.0.0.zip",
-			"checksum": "c5506df2874ebfcac882d08c535b8350",
-			"timestamp": "2023-03-06T09:05:56Z"
+			"checksum": "fb076c6ec767d2b0aa2e233097aa7127",
+			"timestamp": "2023-03-06T10:15:24Z"
 		},
 		{
 		"version": "1.0.0.0",
