@@ -6,7 +6,7 @@
 	"guid": "513fd7f0-2f49-44aa-85a1-fbf328469f66",
 	"imageUrl": "https://github.com/ykxVK8yL5L/jellyfin-plugin-pikpak/raw/main/Jellyfin.Plugin.PikPak/Images/PikPak.png",
 	"name": "PikPak",
-	"overview": "PikPak plugin for jellyfi.",
+	"overview": "PikPak plugin for jellyfi",
 	"owner": "ykxVK8yL5L",
 	"targetAbi": "10.8.0",
 	"timestamp": "2023-03-06T10:15:24Z",
