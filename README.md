@@ -1,6 +1,7 @@
 # 半成品  啥也不是  切勿使用    
 # 可以成功播放视频  但是cpu和内存负载高  不建议使用    
 # 视频演示:https://youtu.be/zoqMS83MDws    
+# 以后版本命名以Jellyfin版本为准
 
 ## https://raw.githubusercontent.com/ykxVK8yL5L/jellyfin-plugin-pikpak/main/manifest.json    
 
@@ -151,6 +152,11 @@ Likewise you might need to get data and services from the Jellyfin core, Jellyfi
 - **IUserManager** - Allows you to retrieve user info and user library related info
 - **IXmlSerializer** - Allows you to use the main xml serializer
 - **IZipClient** - Allows you to use the core zip client for compressing and decompressing data
+
+ ```bash
+   dotnet build Jellyfin.Plugin.PikPak.sln
+   ```
+
 
 ## 5. Submit your Plugin
 
