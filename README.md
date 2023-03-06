@@ -154,7 +154,8 @@ Likewise you might need to get data and services from the Jellyfin core, Jellyfi
 - **IZipClient** - Allows you to use the core zip client for compressing and decompressing data
 
  ```bash
-   dotnet build Jellyfin.Plugin.PikPak.sln
+   dotnet build Jellyfin.Plugin.PikPak.sln  
+   dotnet publish --configuration Release --output bin
    ```
 
 
